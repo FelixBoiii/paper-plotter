@@ -9,6 +9,10 @@ module.exports = {
         132: '35rem',
         168: '42rem',
         182: '48rem',
+        'canwsm': '360',
+        'canhsm': '295',
+        'canwl': '500',
+        'canhl': '400',
       },
     },
 

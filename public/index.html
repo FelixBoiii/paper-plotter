@@ -16,10 +16,11 @@
 
 </head>
 
-<body class="bg-white">
+<body class="bg-white w-full h-full m-0 p-0 overflow-x-hidden">
     <nav class="relative flex items-center justify-between flex-wrap bg-white p-4">
         <div class="flex items-center flex-shrink-0 text-gray-700 lg:ml-6">
-            <span class="font-bold text-4xl tracking-tight" style="font-family: Nunito;">Paper Plotter</span>
+            <span class="font-bold text-4xl tracking-tight text-center md-text-left" style="font-family: Nunito;">Paper
+                Plotter</span>
         </div>
         <div class="w-full hidden md:block md:flex md:items-center md:w-auto lg:mr-20">
             <div class="text-xl md:flex-grow font-semibold">
@@ -58,7 +59,7 @@
 
                 </div>
                 <div class="flex mb-6">
-                    <embed class="h-40 lg:h-48" src="assets/MainScreenPDFexample.svg" type="">
+                    <embed class="h-32 lg:h-48" src="assets/MainScreenPDFexample.svg" type="">
                 </div>
                 <div>
                     <button id="#create-function"
@@ -80,7 +81,7 @@
     </div>
     <img class="w-screen" src="assets/overlay-and-scissor.svg" alt="" style="margin-top: -1px;">
     <div class="pt-24 flex items-center justify-center" id="create-function">
-        <h1 class="text-5xl text-blue-400" style="font-family: Nunito;">Create your own function</h1>
+        <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Create your own function</h1>
     </div>
     <div class="flex justify-center items-center">
         <div class="m-2 mt-16 lg:ym-8 bg-blue-400 rounded-lg md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
@@ -185,7 +186,8 @@
                     </div>
                 </div>
                 <div class="w-11/12 lg:w-1/2 lg:ml-2 flex items-center justify-center">
-                    <canvas id="graph-canvas" class="m-0" width="500" height="400"></canvas>
+                    <canvas id="graph-canvas" class="m-0 w-canwsm h-canhsm sm:w-canwl sm:h-canhl" width="500"
+                        height="400"></canvas>
                     <canvas id="download-canvas" class="hidden" width="500" height="400"></canvas>
                 </div>
             </div>
@@ -209,11 +211,11 @@
     </div>
 
 
-    <div class="pt-56 flex items-center justify-center" id="premade-functions">
-        <h1 class="text-5xl text-blue-400" style="font-family: Nunito;">Example functions</h1>
+    <div class="pt-32 flex items-center justify-center" id="premade-functions">
+        <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Example functions</h1>
     </div>
     <div
-        class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-16 mx-1 md:mx-8 lg:mx-12 xl:mx-16 mt-48 mb-4 lg:mb-4">
+        class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-16 mx-2 md:mx-8 lg:mx-12 xl:mx-16 mt-48 mb-4 lg:mb-4">
         <div class="flex flex-col justify-center items-center h-96 bg-no-repeat bg-center bg-contain mb-20"
             style="background-image: url(assets/blob-grid-1.svg); ">
             <img class="-mt-56 w-96" src="assets/function-main.png" alt="">
