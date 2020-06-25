@@ -8,7 +8,6 @@
     <link rel="icon" type="image/svg+xml" href="assets/inconforplotter.svg">
     <link rel="stylesheet" href="./build/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
         integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
         crossorigin="anonymous"> </script>
@@ -30,7 +29,7 @@
                 </a>
                 <a href="#premade-functions"
                     class="block mt-4 md:inline-block md:mt-0 text-gray-700 hover:text-gray-500 mr-4 lg: mr-10">
-                    premade functions
+                    example functions
                 </a>
                 <a href="#instructions"
                     class="block mt-4 md:inline-block md:mt-0 text-gray-700 hover:text-gray-500 mr-4 lg: mr-10">
@@ -219,8 +218,8 @@
         <div class="flex flex-col justify-center items-center h-96 bg-no-repeat bg-center bg-contain mb-20"
             style="background-image: url(assets/blob-grid-1.svg); ">
             <img class="-mt-56 w-96" src="assets/function-main.png" alt="">
-            <div class="flex justify-center items-center -m-4">
-                <p class="mr-2 text-white text-lg">$$z = {\sin(\sqrt{x^2+y^2}) \over \sqrt{x^2+y^2}}$$</p>
+            <div class="flex justify-center items-center -m-2 ">
+                <img src="assets/func1.svg" alt="">
                 <button id="premade-function-button-1"
                     class="h-12 px-2 ml-2 bg-white hover:bg-gray-100 text-blue-500 font-semibold border border-gray-400 rounded-lg shadow-lg">
                     Download PDF
@@ -230,8 +229,8 @@
         <div class="flex flex-col justify-center items-center h-96 bg-no-repeat bg-center bg-contain mb-20"
             style="background-image: url(assets/blob-grid-2.svg); ">
             <img class="-mt-56 w-96" src="assets/function-2.png" alt="">
-            <div class="flex justify-center items-center -m-4">
-                <p class="mr-2 text-white text-lg">$$z = {\sin(x)\sin(y)}$$</p>
+            <div class="flex justify-center items-center -m-2">
+                <img src="assets/func2.svg" alt="">
                 <button id="premade-function-button-2"
                     class="h-12 px-2 ml-2  bg-white hover:bg-gray-100 text-blue-500 font-semibold border border-gray-400 rounded-lg shadow-lg">
                     Download PDF
@@ -241,8 +240,8 @@
         <div class="flex flex-col justify-center items-center h-96 bg-no-repeat bg-center bg-contain mb-20"
             style="background-image: url(assets/blob-grid-3.svg); ">
             <img class="-mt-56 w-96" src="assets/function-3.png" alt="">
-            <div class="flex justify-center items-center -m-4">
-                <p class="mr-2 text-white text-lg">$$z = \frac {7x y} {e^(x^2 + y^2)} $$</p>
+            <div class="flex justify-center items-center -m-2">
+                <img src="assets/func3.svg" alt="">
                 <button id="premade-function-button-3"
                     class="h-12 px-2 ml-2  bg-white hover:bg-gray-100 text-blue-500 font-semibold border border-gray-400 rounded-lg shadow-lg">
                     Download PDF
@@ -293,7 +292,7 @@
     </div>
 
     </div>
-    <div class="bg-gray-700">
+    <div class="bg-gray-700" id="about">
         <div class="flex flex-col md:flex-row items-center justify-center px-6 py-12 md:px-24 text-white">
             <div class="text-xl w-auto xl:w-1/4 align-top">
                 <h1 class="font-semibold">about:</h1>
