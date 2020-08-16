@@ -1,8 +1,5 @@
 
 //all the variables are here. I know it's shit don't read this code
-let allx = [];
-let allz = [];
-
 /* Canvas and context objects */
 let parsedExpression;
 
@@ -88,9 +85,15 @@ function updateTotalLayers() {
     document.getElementById("total-layers").innerHTML = "Total layers: " + Math.floor(((maxYInput - minYInput) / YSTEP + 1));
 }
 
-/*
-    return functions for variables.
-*/
+function checkTotalLayers() {
+    let totalLayers = Math.floor(((maxYInput - minYInput) / YSTEP + 1));
+    if (totalLayers > 101) {
+        showErrorMessage("tooMLayers");
+        YSTEP = ((maxYInput - minYInput) / (100));
+    }
+    document.getElementById("total-layers").innerHTML = "Total layers: " + Math.floor(((maxYInput - minYInput) / YSTEP + 1));
+
+}
 
 // Returns the right boundary of the logical viewport:
 function MaxX() {
@@ -148,7 +151,7 @@ function Draw() {
     } catch (error) {
         showErrorMessage("fWriteErr");
     }
-
+    checkTotalLayers();
     if (Canvas.getContext) {
 
         // Set up the canvas:
@@ -337,6 +340,8 @@ function showErrorMessage(error) {
         errorMsg.innerHTML = "The function you put in is too low. Make the minimum z higher";
     } else if (error == "high") {
         errorMsg.innerHTML = "The function you put in is too high. Make the maximum z higher";
+    } else if (error == "tooMLayers") {
+        errorMsg.innerHTML = "You can't have more than 101 layers";
     } else {
         errorMsg.innerHTML = "Please change the parameters of your function.";
     }
