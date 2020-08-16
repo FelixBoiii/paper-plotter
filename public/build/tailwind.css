@@ -696,10 +696,6 @@ img {
   margin-top: 1rem;
 }
 
-.mr-4 {
-  margin-right: 1rem;
-}
-
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -1023,12 +1019,18 @@ img {
   --transform-rotate: 180deg;
 }
 
-/*input number delete arrows*/
+/*input number delete arrows for Chrome, Safari, Edge, Opera */
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/*and for Firefox */
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /*range slider*/
