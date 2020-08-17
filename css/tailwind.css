@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/*deletes extra whitespace on right side on mobile*/
+@media only screen and (max-width: 365px) {
+  .creator{
+    width: 360px;
+  }
+}
 /*input number delete arrows for Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
