@@ -207,7 +207,7 @@ function ExampleRenderFunction(f) {
 //special render with lines
 function RenderFunction(f) {
     var first = true;
-    let layerIndex = -10;
+    let layerIndex;
     Ctx.fillStyle = "#63B3ED";
     Ctx.fillRect(0, 0, Canvas.width, Canvas.height);
     for (let index = minYInput; index <= maxYInput; index += YSTEP) {
@@ -236,6 +236,7 @@ function RenderFunction(f) {
 
 }
 
+//renders the strips.
 function renderSetup() {
     CtxPdf.fillStyle = "white";
     CtxPdf.fillRect(0, 0, Canvas.width, Canvas.height);
