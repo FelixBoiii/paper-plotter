@@ -12,8 +12,9 @@
         integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
         crossorigin="anonymous"> </script>
     <script src="https://unpkg.com/mathjs@6.6.4/dist/math.min.js"></script>
-    <script async defer data-domain="felixboiii.github.io/paper-plotter"
+    <script async defer Secure data-domain="felixboiii.github.io/paper-plotter"
         src="https://plausible.io/js/plausible.js"></script>
+    <script src="gradient-generator.js"></script>
 
 </head>
 
@@ -84,116 +85,133 @@
     <div class="pt-24 flex items-center justify-center" id="create-function">
         <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Create your own function</h1>
     </div>
-    <div class="flex justify-center items-center creator">
-        <div class="m-2 mt-16 lg:ym-8 bg-blue-400 rounded-lg md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
-            <div class=" p-4 md:p-4 lg:p-6 flex flex-col lg:flex-row items-center justify-center">
-                <div class="w-11/12 lg:w-1/2 mr-2">
-                    <div class="">
-                        <div class="w-20 bg-blue-600 rounded-t-md">
-                            <h1 class="text-white font-sans text-lg text-center">Function</h1>
-                        </div>
-                        <textarea id="function-code"
-                            class="text-gray-900 w-full h-16 p-2 resize-none shadow-md rounded-lg rounded-tl-none">(sin(sqrt(x^2+y^2)))/(sqrt(x^2+y^2))</textarea>
-                    </div>
-                    <div class="mt-4">
-                        <div class="w-20 bg-blue-600 rounded-t-md">
-                            <h1 class="text-white font-sans text-lg text-center">Layers</h1>
-                        </div>
-                        <div class="bg-white h-24 resize-none shadow-md rounded-lg rounded-tl-none">
-                            <div class="flex flex-row">
-                                <div class="md:mr-2">
-                                    <div class="flex p-2 ">
-                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
-                                            type="number" id="minyRangeInput" value="-10"
-                                            oninput="minyRangeInputF(this.value)">
-                                        <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;y&lt;</h1>
-                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
-                                            type="number" id="maxyRangeInput" value="10"
-                                            oninput="maxyRangeInputF(this.value)">
 
-                                    </div>
-                                    <div class="flex p-2 ">
-                                        <h1 class="md:mr-2 text-gray-900 text-md text-lg">Step size:</h1>
-                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
-                                            type="number" id="YStepInput" value="1" oninput="YStepInputF(this.value)">
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex flex-col md:flex-row p-2 ">
-                                        <p class="md:mr-2 text-gray-900 text-lg sm:w-24" id="y-value">3D view</p>
-                                        <input class="slider md:float-left" type="range" min="-10" max="10" value="0"
-                                            step="1" oninput="changeY(this.value)" id="inputYRange">
 
-                                    </div>
-                                    <h1 class="p-2 md:mr-2 text-gray-900 text-md text-lg" id="total-layers">Total
-                                        layers: 21</h1>
-                                </div>
+    <div class="creator m-2 mt-16 lg:ym-8">
+        <div class=" flex justify-center">
+            <div class=" md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
+                <button id="tab1" class="w-32 h-12 active-tab rounded-t-md" onclick="tabchange(1)">
+                    <h1 class="text-white text-2xl text-center" style="font-family: Nunito;">Settings</h1>
+                </button>
+                <button id="tab2" class="ml-1 w-32 h-12 inactive-tab rounded-t-md" onclick="tabchange(2)">
+                    <h1 class="text-white text-2xl text-center" style="font-family: Nunito;">Advanced</h1>
+                </button>
 
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="flex mt-4 ">
-                        <div class="w-40">
+            </div>
+        </div>
+        <div class="flex justify-center items-center">
+            <div class=" bg-blue-400 rounded-lg rounded-tl-none md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
+                <div class=" p-4 md:p-4 lg:p-6 flex flex-col lg:flex-row items-center justify-center">
+                    <div class="w-11/12 lg:w-1/2 mr-2">
+                        <div class="">
                             <div class="w-20 bg-blue-600 rounded-t-md">
-                                <h1 class="text-white font-sans text-lg text-center">Window</h1>
+                                <h1 class="text-white font-sans text-lg text-center">Function</h1>
                             </div>
-                            <div class="bg-white h-20 shadow-md rounded-lg rounded-tl-none">
-                                <div class="flex p-2 ">
-                                    <input class="w-10 text-center border-gray-500 border-2 rounded-md" type="number"
-                                        id="minxRange" value="-12" oninput="minxRangeF(this.value)">
-                                    <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;x&lt;</h1>
-                                    <input class="w-10 text-center border-gray-500 border-2 rounded-md" type="number"
-                                        id="maxxRange" value="12" oninput="maxxRangeF(this.value)">
+                            <textarea id="function-code"
+                                class="text-gray-900 w-full h-16 p-2 resize-none shadow-md rounded-lg rounded-tl-none">(sin(sqrt(x^2+y^2)))/(sqrt(x^2+y^2))</textarea>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-20 bg-blue-600 rounded-t-md">
+                                <h1 class="text-white font-sans text-lg text-center">Layers</h1>
+                            </div>
+                            <div class="bg-white h-24 resize-none shadow-md rounded-lg rounded-tl-none">
+                                <div class="flex flex-row">
+                                    <div class="md:mr-2">
+                                        <div class="flex p-2 ">
+                                            <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                                type="number" id="minyRangeInput" value="-10"
+                                                oninput="minyRangeInputF(this.value)">
+                                            <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;y&lt;</h1>
+                                            <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                                type="number" id="maxyRangeInput" value="10"
+                                                oninput="maxyRangeInputF(this.value)">
+
+                                        </div>
+                                        <div class="flex p-2 ">
+                                            <h1 class="md:mr-2 text-gray-900 text-md text-lg">Step size:</h1>
+                                            <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                                type="number" id="YStepInput" value="1"
+                                                oninput="YStepInputF(this.value)">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex flex-col md:flex-row p-2 ">
+                                            <p class="md:mr-2 text-gray-900 text-lg sm:w-24" id="y-value">3D view</p>
+                                            <input class="slider md:float-left" type="range" min="-10" max="10"
+                                                value="0" step="1" oninput="changeY(this.value)" id="inputYRange">
+
+                                        </div>
+                                        <h1 class="p-2 md:mr-2 text-gray-900 text-md text-lg" id="total-layers">Total
+                                            layers: 21</h1>
+                                    </div>
+
                                 </div>
-                                <div class="flex pl-2 pb-2 ">
-                                    <input class="w-10 text-center border-gray-500 border-2 rounded-md" type="number"
-                                        id="minyRange" value="-1.2" oninput="minyRangeF(this.value)">
-                                    <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;z&lt;</h1>
-                                    <input class="w-10 text-center border-gray-500 border-2 rounded-md" type="number"
-                                        id="maxyRange" value="1.5" oninput="maxyRangeF(this.value)">
-                                </div>
+
                             </div>
                         </div>
-                        <div class=" w-9/12 ml-4 invisible sm:visible">
-                            <div class="w-32 bg-blue-600 rounded-t-md">
-                                <h1 class="text-white font-sans text-lg text-center">Explanation</h1>
+                        <div class="flex mt-4 ">
+                            <div class="w-40">
+                                <div class="w-20 bg-blue-600 rounded-t-md">
+                                    <h1 class="text-white font-sans text-lg text-center">Window</h1>
+                                </div>
+                                <div class="bg-white h-20 shadow-md rounded-lg rounded-tl-none">
+                                    <div class="flex p-2 ">
+                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                            type="number" id="minxRange" value="-12" oninput="minxRangeF(this.value)">
+                                        <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;x&lt;</h1>
+                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                            type="number" id="maxxRange" value="12" oninput="maxxRangeF(this.value)">
+                                    </div>
+                                    <div class="flex pl-2 pb-2 ">
+                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                            type="number" id="minyRange" value="-1.2" oninput="minyRangeF(this.value)">
+                                        <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;z&lt;</h1>
+                                        <input class="w-10 text-center border-gray-500 border-2 rounded-md"
+                                            type="number" id="maxyRange" value="1.5" oninput="maxyRangeF(this.value)">
+                                    </div>
+                                </div>
                             </div>
-                            <div
-                                class="bg-white h-20 shadow-md rounded-lg rounded-tl-none flex justify-center items-center">
-                                <h1 class="m-2 text-gray-700 font-semibold">On this canvas you can
-                                    see what the function
-                                    will
-                                    look like.
-                                    You can
-                                    tweak
-                                    the
-                                    variables to get your desired result.</h1>
+                            <div class=" w-9/12 ml-4 invisible sm:visible">
+                                <div class="w-32 bg-blue-600 rounded-t-md">
+                                    <h1 class="text-white font-sans text-lg text-center">Explanation</h1>
+                                </div>
+                                <div
+                                    class="bg-white h-20 shadow-md rounded-lg rounded-tl-none flex justify-center items-center">
+                                    <h1 class="m-2 text-gray-700 font-semibold">On this canvas you can
+                                        see what the function
+                                        will
+                                        look like.
+                                        You can
+                                        tweak
+                                        the
+                                        variables to get your desired result.</h1>
+                                </div>
                             </div>
+
+
                         </div>
 
-
+                        <div class="flex mt-4 mb-2 lg-mn-0">
+                            <button onclick="Draw();"
+                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
+                                Draw function
+                            </button>
+                            <button onclick="downloadPdf()"
+                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
+                                Download PDF
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="flex mt-4 mb-2 lg-mn-0">
-                        <button onclick="Draw();"
-                            class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
-                            Draw function
-                        </button>
-                        <button onclick="downloadPdf()"
-                            class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
-                            Download PDF
-                        </button>
+                    <div class="w-11/12 lg:w-1/2 lg:ml-2 flex items-center justify-center">
+                        <canvas id="graph-canvas" class="m-0 w-canwsm h-canhsm sm:w-canwl sm:h-canhl" width="500"
+                            height="400"></canvas>
+                        <canvas id="download-canvas" class="hidden" width="500" height="400"></canvas>
                     </div>
-                </div>
-                <div class="w-11/12 lg:w-1/2 lg:ml-2 flex items-center justify-center">
-                    <canvas id="graph-canvas" class="m-0 w-canwsm h-canhsm sm:w-canwl sm:h-canhl" width="500"
-                        height="400"></canvas>
-                    <canvas id="download-canvas" class="hidden" width="500" height="400"></canvas>
                 </div>
             </div>
         </div>
     </div>
+    <div id="svgPlotter"></div>
     <div class="flex items-center justify-center" id="error-message">
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full"
             role="alert">

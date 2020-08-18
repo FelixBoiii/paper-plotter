@@ -1,4 +1,3 @@
-
 //all the variables are here. I know it's shit don't read this code
 /* Canvas and context objects */
 let parsedExpression;
@@ -47,7 +46,24 @@ let pdfYMargin = 0;
     all the functions here that change when the variables are changes 
 */
 
+//gradients
+let viridis_gradient = GradientGenerator.createGradient(['#440154', '#21908d', '#bddf26']);
+let megatron_gradient = GradientGenerator.createGradient(['#C6FFDD', '#FBD786', '#f64f59']);
+let magma_gradient = GradientGenerator.createGradient(['#000004', '#b5367a', '#fecf92']);
+let spectral_gradient = GradientGenerator.createGradient(['#9e0142', '#fbf8b0', '#4288b5']);
+let jShine_gradient = GradientGenerator.createGradient(['#12c2e9', '#c471ed', '#f64f59']);
+let RdYlBu_gradient = GradientGenerator.createGradient(['#a50026', '#faf8c0', '#4a74b4']);
+
+//ux
 //value change events
+function tabchange(index) {
+    tab1 = document.getElementById("tab1");
+    tab2 = document.getElementById("tab2");
+    if (index == 1) {
+
+    }
+}
+
 function maxxRangeF(val) {
     maxx = parseFloat(val);
 }
@@ -187,7 +203,7 @@ function ExampleRenderFunction(f) {
     CtxPdf.lineTo(10, Canvas.height - 10);
     CtxPdf.closePath();
     CtxPdf.stroke();
-    CtxPdf.fillStyle = "white";
+    CtxPdf.fillStyle = magma_gradient.getColorHexAt(mapRange(y, minYInput, maxYInput, 0, 1));
     CtxPdf.fill();
 
     CtxPdf.fillStyle = "black";
@@ -230,7 +246,7 @@ function RenderFunction(f) {
         Ctx.lineTo(((10) + layerIndex * plotLayerOffsetX) + (Width - plotWidth) * 0.5, ((plotHeight - 25) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin);
         Ctx.closePath();
         Ctx.stroke();
-        Ctx.fillStyle = "white";
+        Ctx.fillStyle = magma_gradient.getColorHexAt(mapRange(index, minYInput, maxYInput, 0, 1));
         Ctx.fill();
     }
 
@@ -390,6 +406,36 @@ window.addEventListener("load", function () {
 /*
     TODO: future functions
 */
+
+function createSvg() {
+    const svg1 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+    // set width and height
+    svg1.setAttribute("width", "500");
+    svg1.setAttribute("height", "400");
+
+    // create a circle
+    const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    cir1.setAttribute("cx", "80");
+    cir1.setAttribute("cy", "80");
+    cir1.setAttribute("r", "30");
+    cir1.setAttribute("fill", "red");
+
+    // attach it to the container
+    svg1.appendChild(cir1);
+
+    // attach container to document
+    document.getElementById("svgPlotter").appendChild(svg1);
+
+}
+
+// linearly maps value from the range (a..b) to (c..d)
+function mapRange(value, a, b, c, d) {
+    // first map value from (a..b) to (0..1)
+    value = (value - a) / (b - a);
+    // then map it from (0..1) to (c..d) and return it
+    return c + value * (d - c);
+}
 
 //functions for color heat map for future update
 /*function range(start, end, step = 1) {
