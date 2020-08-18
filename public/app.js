@@ -255,8 +255,14 @@ function ExampleRenderFunction(f) {
     CtxPdf.lineTo((Canvas.width / 4) * 3, Canvas.height - 50);
 
     CtxPdf.stroke();
+    let gradientcolor = mainGradient.getColorAt(mapRange(y, minYInput, maxYInput, 0, 1));
+    if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
+        CtxPdf.fillStyle = "white";
+        console.log((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07));
+    }
     CtxPdf.font = "24px Roboto";
     CtxPdf.fillText("y=" + y.toFixed(2), 210, 340);
+    CtxPdf.fillStyle = "black";
 }
 
 //special render with lines
