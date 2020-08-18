@@ -534,6 +534,10 @@ img {
   border-width: 2px;
 }
 
+.border-4 {
+  border-width: 4px;
+}
+
 .border {
   border-width: 1px;
 }
@@ -606,6 +610,10 @@ img {
   height: 1.5rem;
 }
 
+.h-8 {
+  height: 2rem;
+}
+
 .h-12 {
   height: 3rem;
 }
@@ -624,6 +632,10 @@ img {
 
 .h-32 {
   height: 8rem;
+}
+
+.h-56 {
+  height: 14rem;
 }
 
 .h-96 {
@@ -678,6 +690,14 @@ img {
 .mx-6 {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .mr-2 {
@@ -746,6 +766,10 @@ img {
 
 .-mt-56 {
   margin-top: -14rem;
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 .overflow-x-hidden {
@@ -875,6 +899,12 @@ img {
   color: rgba(255, 255, 255, var(--text-opacity));
 }
 
+.text-gray-500 {
+  --text-opacity: 1;
+  color: #a0aec0;
+  color: rgba(160, 174, 192, var(--text-opacity));
+}
+
 .text-gray-700 {
   --text-opacity: 1;
   color: #4a5568;
@@ -943,8 +973,16 @@ img {
   width: 1.5rem;
 }
 
+.w-8 {
+  width: 2rem;
+}
+
 .w-10 {
   width: 2.5rem;
+}
+
+.w-16 {
+  width: 4rem;
 }
 
 .w-20 {
@@ -995,13 +1033,34 @@ img {
   width: 100vw;
 }
 
+.z-0 {
+  z-index: 0;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
 .gap-16 {
   grid-gap: 4rem;
   gap: 4rem;
 }
 
+.row-gap-2 {
+  grid-row-gap: 0.5rem;
+  row-gap: 0.5rem;
+}
+
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
 }
 
 .transform {
@@ -1017,6 +1076,14 @@ img {
 
 .rotate-180 {
   --transform-rotate: 180deg;
+}
+
+.-translate-x-1 {
+  --transform-translate-x: -0.25rem;
+}
+
+.-translate-y-8 {
+  --transform-translate-y: -2rem;
 }
 
 /*deletes extra whitespace on right side on mobile*/
@@ -1039,6 +1106,14 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.active-tab{
+  background-color:#63b3ed;
+}
+
+.inactive-tab{
+  background-color:#3182CE;
 }
 
 /*range slider*/
@@ -1082,6 +1157,10 @@ input[type=number] {
     display: inline;
   }
 
+  .sm\:h-24 {
+    height: 6rem;
+  }
+
   .sm\:h-canhl {
     height: 400;
   }
@@ -1105,6 +1184,18 @@ input[type=number] {
 
   .sm\:w-canwl {
     width: 500;
+  }
+
+  .sm\:grid-flow-col {
+    grid-auto-flow: column;
+  }
+
+  .sm\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .sm\:grid-rows-1 {
+    grid-template-rows: repeat(1, minmax(0, 1fr));
   }
 }
 

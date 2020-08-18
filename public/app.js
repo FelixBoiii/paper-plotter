@@ -1,4 +1,3 @@
-
 //all the variables are here. I know it's shit don't read this code
 /* Canvas and context objects */
 let parsedExpression;
@@ -43,11 +42,67 @@ let miny = -1.2;
 let pdfXMargin = 10;
 let pdfYMargin = 0;
 
+//for tabchange
+let lastTab = 2;
+let lastGradient = 0;
 /*
     all the functions here that change when the variables are changes 
 */
 
+//gradients
+let white_gradient = GradientGenerator.createGradient(['#ffffff', '#ffffff', '#ffffff']);
+let viridis_gradient = GradientGenerator.createGradient(['#440154', '#21908d', '#bddf26']);
+let magma_gradient = GradientGenerator.createGradient(['#000004', '#b5367a', '#fecf92']);
+let megatron_gradient = GradientGenerator.createGradient(['#f64f59', '#FBD786', '#C6FFDD']);
+let spectral_gradient = GradientGenerator.createGradient(['#9e0142', '#fbf8b0', '#4288b5']);
+let jShine_gradient = GradientGenerator.createGradient(['#12c2e9', '#c471ed', '#f64f59']);
+
+let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient];
+let mainGradient = gradients[0];
+//ux
 //value change events
+function tabchange(index) {
+    tab1 = document.getElementById("tab1");
+    tab2 = document.getElementById("tab2");
+    tab1Con = document.getElementById("tab1Content");
+    tab2Con = document.getElementById("tab2Content");
+    if (index == 1) {
+        tab1.classList.add('active-tab');
+        tab1.classList.remove('inactive-tab');
+        tab2.classList.remove('active-tab');
+        tab2.classList.add('inactive-tab');
+
+        tab1Con.classList.add('hidden');
+        tab2Con.classList.remove('hidden');
+    } else {
+        tab1.classList.remove('active-tab');
+        tab1.classList.add('inactive-tab');
+        tab2.classList.add('active-tab');
+        tab2.classList.remove('inactive-tab');
+
+        tab1Con.classList.remove('hidden');
+        tab2Con.classList.add('hidden');
+    }
+}
+
+function chooseGradientUi(index) {
+    if (index != lastGradient) {
+        checkmark = document.getElementById("checkmark" + index);
+        oldcheckmark = document.getElementById("checkmark" + lastGradient);
+
+        lastGradient = index;
+        mainGradient = gradients[index];
+
+        checkmark.classList.remove('opacity-0');
+        checkmark.classList.add('opacity-100');
+
+        oldcheckmark.classList.add('opacity-0');
+        oldcheckmark.classList.remove('opacity-100');
+
+        Draw();
+    }
+}
+
 function maxxRangeF(val) {
     maxx = parseFloat(val);
 }
@@ -187,7 +242,7 @@ function ExampleRenderFunction(f) {
     CtxPdf.lineTo(10, Canvas.height - 10);
     CtxPdf.closePath();
     CtxPdf.stroke();
-    CtxPdf.fillStyle = "white";
+    CtxPdf.fillStyle = mainGradient.getColorHexAt(mapRange(y, minYInput, maxYInput, 0, 1));
     CtxPdf.fill();
 
     CtxPdf.fillStyle = "black";
@@ -200,8 +255,14 @@ function ExampleRenderFunction(f) {
     CtxPdf.lineTo((Canvas.width / 4) * 3, Canvas.height - 50);
 
     CtxPdf.stroke();
+    let gradientcolor = mainGradient.getColorAt(mapRange(y, minYInput, maxYInput, 0, 1));
+    if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
+        CtxPdf.fillStyle = "white";
+        console.log((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07));
+    }
     CtxPdf.font = "24px Roboto";
     CtxPdf.fillText("y=" + y.toFixed(2), 210, 340);
+    CtxPdf.fillStyle = "black";
 }
 
 //special render with lines
@@ -230,7 +291,7 @@ function RenderFunction(f) {
         Ctx.lineTo(((10) + layerIndex * plotLayerOffsetX) + (Width - plotWidth) * 0.5, ((plotHeight - 25) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin);
         Ctx.closePath();
         Ctx.stroke();
-        Ctx.fillStyle = "white";
+        Ctx.fillStyle = mainGradient.getColorHexAt(mapRange(index, minYInput, maxYInput, 0, 1));
         Ctx.fill();
     }
 
@@ -390,6 +451,36 @@ window.addEventListener("load", function () {
 /*
     TODO: future functions
 */
+
+function createSvg() {
+    const svg1 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+    // set width and height
+    svg1.setAttribute("width", "500");
+    svg1.setAttribute("height", "400");
+
+    // create a circle
+    const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    cir1.setAttribute("cx", "80");
+    cir1.setAttribute("cy", "80");
+    cir1.setAttribute("r", "30");
+    cir1.setAttribute("fill", "red");
+
+    // attach it to the container
+    svg1.appendChild(cir1);
+
+    // attach container to document
+    document.getElementById("svgPlotter").appendChild(svg1);
+
+}
+
+// linearly maps value from the range (a..b) to (c..d)
+function mapRange(value, a, b, c, d) {
+    // first map value from (a..b) to (0..1)
+    value = (value - a) / (b - a);
+    // then map it from (0..1) to (c..d) and return it
+    return c + value * (d - c);
+}
 
 //functions for color heat map for future update
 /*function range(start, end, step = 1) {
