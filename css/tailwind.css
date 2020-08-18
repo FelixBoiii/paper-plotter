@@ -19,6 +19,13 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+.active-tab{
+  background-color:#63b3ed;
+}
+.inactive-tab{
+  background-color:#3182CE;
+}
+
 /*range slider*/
 .slider {
   -webkit-appearance: none;
