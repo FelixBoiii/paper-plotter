@@ -87,7 +87,7 @@
     </div>
 
 
-    <div class="creator m-2 mt-16 lg:ym-8">
+    <div class="creator mt-16 lg:ym-8">
         <div class=" flex justify-center">
             <div class=" md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
                 <button id="tab1" class="w-32 h-12 active-tab rounded-t-md" onclick="tabchange(1)">
@@ -101,8 +101,66 @@
         </div>
         <div class="flex justify-center items-center">
             <div class=" bg-blue-400 rounded-lg rounded-tl-none md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full">
-                <div class=" p-4 md:p-4 lg:p-6 flex flex-col lg:flex-row items-center justify-center">
-                    <div class="w-11/12 lg:w-1/2 mr-2">
+                <div class=" p-4 md:p-4 lg:p-6 flex flex-col lg:flex-row">
+                    <!--//-->
+                    <div id="tab1Content" class="w-11/12 lg:w-1/2 mr-2 hidden">
+                        <div class="">
+                            <div class="w-20 bg-blue-600 rounded-t-md">
+                                <h1 class="text-white font-sans text-lg text-center">Gradient</h1>
+                            </div>
+                            <div id="gradient-code"
+                                class="text-gray-900 w-full bg-white h-56 sm:h-24 p-2 resize-none shadow-md rounded-lg rounded-tl-none">
+                                <div
+                                    class="grid grid-cols-3 grid-rows-2 sm:grid-cols-6 sm:grid-rows-1 sm:grid-flow-col row-gap-2 transform -translate-x-1">
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark0"
+                                            class="w-8 h-8 relative z-50" alt="">
+                                        <button
+                                            class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0 bg-white border-2 border-gray-400"
+                                            onclick="chooseGradientUi(0)"></button>
+                                    </div>
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark1"
+                                            class="w-8 h-8 relative z-50 opacity-0" alt="">
+                                        <button class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0"
+                                            style="background: linear-gradient(180deg, rgba(68,1,84,1) 0%, rgba(33,144,141,1) 50%, rgba(189,223,38,1) 100%);"
+                                            onclick="chooseGradientUi(1)"></button>
+                                    </div>
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark2"
+                                            class="w-8 h-8 relative z-50 opacity-0" alt="">
+                                        <button class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0"
+                                            style="background:linear-gradient(180deg, rgba(0,0,4,1) 0%, rgba(181,54,122,1) 50%, rgba(254,207,146,1) 100%);"
+                                            onclick="chooseGradientUi(2)"></button>
+                                    </div>
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark3"
+                                            class="w-8 h-8 relative z-50 opacity-0" alt="">
+                                        <button class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0"
+                                            style="background: linear-gradient(180deg, rgba(246,79,89,1) 0%, rgba(251,215,134,1) 50%, rgba(198,255,221,1) 100%);"
+                                            onclick="chooseGradientUi(3)"></button>
+                                    </div>
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark4"
+                                            class="w-8 h-8 relative z-50 opacity-0" alt="">
+                                        <button class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0"
+                                            style="background: linear-gradient(180deg, rgba(158,1,66,1) 0%, rgba(251,248,176,1) 50%, rgba(66,136,181,1) 100%);"
+                                            onclick="chooseGradientUi(4)"></button>
+                                    </div>
+                                    <div>
+                                        <img src="assets/icons8-checkmark.svg" id="checkmark5"
+                                            class="w-8 h-8 relative z-50 opacity-0" alt="">
+                                        <button class="w-16 h-16 rounded-lg shadow-md m-2 transform -translate-y-8 z-0"
+                                            style="background: linear-gradient(180deg, rgba(18,194,233,1) 0%, rgba(196,113,237,1) 50%, rgba(246,79,89,1) 100%);"
+                                            onclick="chooseGradientUi(5)"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--//-->
+                    <div id="tab2Content" class="w-11/12 lg:w-1/2 mr-2 ">
                         <div class="">
                             <div class="w-20 bg-blue-600 rounded-t-md">
                                 <h1 class="text-white font-sans text-lg text-center">Function</h1>

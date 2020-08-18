@@ -20,10 +20,10 @@ input[type=number] {
 }
 
 .active-tab{
-  color:#63b3ed;
+  background-color:#63b3ed;
 }
 .inactive-tab{
-  color:#3182CE;
+  background-color:#3182CE;
 }
 
 /*range slider*/
