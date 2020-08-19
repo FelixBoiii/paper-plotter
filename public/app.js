@@ -51,10 +51,10 @@ let lastGradient = 0;
 
 //gradients
 let white_gradient = GradientGenerator.createGradient(['#ffffff', '#ffffff', '#ffffff']);
-let viridis_gradient = GradientGenerator.createGradient(['#440154', '#21908d', '#bddf26']);
-let magma_gradient = GradientGenerator.createGradient(['#000004', '#b5367a', '#fecf92']);
-let megatron_gradient = GradientGenerator.createGradient(['#f64f59', '#FBD786', '#C6FFDD']);
-let spectral_gradient = GradientGenerator.createGradient(['#9e0142', '#fbf8b0', '#4288b5']);
+let viridis_gradient = GradientGenerator.createGradient(['#440154', '#482475', '#414487', '#355f8d', '#2a788e', '#21908d', '#22a884', '#42be71', '#7ad151', '#bddf26', '#bddf26']);
+let magma_gradient = GradientGenerator.createGradient(['#000004', '#140e36', '#3b0f70', '#641a80', '#8c2981', '#b5367a', '#de4968', '#f66e5c', '#fe9f6d', '#fecf92', '#fecf92']);
+let megatron_gradient = GradientGenerator.createGradient(['#6e40aa', '#be3caf', '#fe4b83', '#ff7747', '#e3b62f', '#b0ef5a', '#53f666', '#1edfa2', '#23acd8', '#4c6fdc', '#4c6fdc']);
+let spectral_gradient = GradientGenerator.createGradient(['#9e0142', '#d13b4b', '#f0704a', '#fcab63', '#fedc8c', '#fbf8b0', '#e0f3a1', '#aadda2', '#69bda9', '#4288b5', '#4288b5']);
 let jShine_gradient = GradientGenerator.createGradient(['#12c2e9', '#c471ed', '#f64f59']);
 
 let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient];
@@ -225,6 +225,7 @@ function ExampleRenderFunction(f) {
     CtxPdf.fillStyle = "white";
     CtxPdf.fillRect(0, 0, Canvas.width, Canvas.height);
     CtxPdf.fillStyle = "black";
+    CtxPdf.strokeStyle = "black";
     CtxPdf.lineWidth = 8;
     CtxPdf.beginPath();
     for (let x = MinX(); x <= MaxX(); x += XSTEP) {
@@ -246,6 +247,11 @@ function ExampleRenderFunction(f) {
     CtxPdf.fill();
 
     CtxPdf.fillStyle = "black";
+    let gradientcolor = mainGradient.getColorAt(mapRange(y, minYInput, maxYInput, 0, 1));
+    if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
+        CtxPdf.fillStyle = "white";
+        CtxPdf.strokeStyle = "white";
+    }
     CtxPdf.beginPath();
     //left cut
     CtxPdf.moveTo((Canvas.width / 4), Canvas.height - 10);
@@ -253,13 +259,8 @@ function ExampleRenderFunction(f) {
     //right cut
     CtxPdf.moveTo((Canvas.width / 4) * 3, Canvas.height - 10);
     CtxPdf.lineTo((Canvas.width / 4) * 3, Canvas.height - 50);
-
     CtxPdf.stroke();
-    let gradientcolor = mainGradient.getColorAt(mapRange(y, minYInput, maxYInput, 0, 1));
-    if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
-        CtxPdf.fillStyle = "white";
-        console.log((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07));
-    }
+
     CtxPdf.font = "24px Roboto";
     CtxPdf.fillText("y=" + y.toFixed(2), 210, 340);
     CtxPdf.fillStyle = "black";
