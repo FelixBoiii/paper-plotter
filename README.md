@@ -1,5 +1,6 @@
 # Paper-plotter
 Paper plotter is a website where you can create pdf's for 3d functions.
+https://felixboiii.github.io/paper-plotter/
 
 If you would like to support this project and help it improve in the future, you can donate via paypal :heart:.
 
