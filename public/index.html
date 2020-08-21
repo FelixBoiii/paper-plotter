@@ -15,7 +15,7 @@
     <script async defer SameSite=None Secure data-domain="felixboiii.github.io/paper-plotter"
         src="https://plausible.io/js/plausible.js"></script>
     <script src="gradient-generator.js"></script>
-
+    <script src="canvas2svg.js"></script>
 </head>
 
 <body class="bg-white w-full h-full m-0 p-0 overflow-x-hidden">
@@ -178,11 +178,11 @@
                                         <div class="flex p-2 ">
                                             <input class="w-10 text-center border-gray-500 border-2 rounded-md"
                                                 type="number" id="minyRangeInput" value="-10"
-                                                oninput="minyRangeInputF(this.value)">
+                                                oninput="minyRangeF(this.value)">
                                             <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;y&lt;</h1>
                                             <input class="w-10 text-center border-gray-500 border-2 rounded-md"
                                                 type="number" id="maxyRangeInput" value="10"
-                                                oninput="maxyRangeInputF(this.value)">
+                                                oninput="maxyRangeF(this.value)">
 
                                         </div>
                                         <div class="flex p-2 ">
@@ -222,10 +222,10 @@
                                     </div>
                                     <div class="flex pl-2 pb-2 ">
                                         <input class="w-10 text-center border-gray-500 border-2 rounded-md"
-                                            type="number" id="minyRange" value="-1.2" oninput="minyRangeF(this.value)">
+                                            type="number" id="minyRange" value="-1.2" oninput="minzRangeF(this.value)">
                                         <h1 class="md:mr-2 md:ml-2 text-gray-900 text-md">&lt;z&lt;</h1>
                                         <input class="w-10 text-center border-gray-500 border-2 rounded-md"
-                                            type="number" id="maxyRange" value="1.5" oninput="maxyRangeF(this.value)">
+                                            type="number" id="maxyRange" value="1.5" oninput="maxzRangeF(this.value)">
                                     </div>
                                 </div>
                             </div>
@@ -269,7 +269,6 @@
             </div>
         </div>
     </div>
-    <div id="svgPlotter"></div>
     <div class="flex items-center justify-center" id="error-message">
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full"
             role="alert">
@@ -287,6 +286,9 @@
         </div>
     </div>
 
+    <div id="svgPlotter">
+
+    </div>
 
     <div class="pt-32 flex items-center justify-center" id="premade-functions">
         <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Example functions</h1>
