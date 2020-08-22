@@ -13,6 +13,8 @@ let CtxPdf = PdfCanvas.getContext('2d');
 let Canvas = document.getElementById('graph-canvas');
 let Ctx = Canvas.getContext('2d');
 
+let verticalGradientBool = document.getElementById("verticalGradient").checked;
+
 let parsedExpression;
 //pdf side margin
 let pdfXMargin = 10;
@@ -36,7 +38,6 @@ let YSTEP = 1;
 let totalIndex = 0;
 
 let materialThickness = 4;
-
 //other initialization for the 3D canvas
 //width and height of the 3D view plot
 let plotWidth = 400;
@@ -52,16 +53,16 @@ let lastTab = 2;
 let lastGradient = 0;
 
 //gradients
-let white_gradient = GradientGenerator.createGradient(['#ffffff', '#ffffff', '#ffffff']);
-let viridis_gradient = GradientGenerator.createGradient(['#440154', '#482475', '#414487', '#355f8d', '#2a788e', '#21908d', '#22a884', '#42be71', '#7ad151', '#bddf26', '#bddf26']);
-let magma_gradient = GradientGenerator.createGradient(['#000004', '#140e36', '#3b0f70', '#641a80', '#8c2981', '#b5367a', '#de4968', '#f66e5c', '#fe9f6d', '#fecf92', '#fecf92']);
-let megatron_gradient = GradientGenerator.createGradient(['#6e40aa', '#be3caf', '#fe4b83', '#ff7747', '#e3b62f', '#b0ef5a', '#53f666', '#1edfa2', '#23acd8', '#4c6fdc', '#4c6fdc']);
-let spectral_gradient = GradientGenerator.createGradient(['#9e0142', '#d13b4b', '#f0704a', '#fcab63', '#fedc8c', '#fbf8b0', '#e0f3a1', '#aadda2', '#69bda9', '#4288b5', '#4288b5']);
-let jShine_gradient = GradientGenerator.createGradient(['#12c2e9', '#c471ed', '#f64f59']);
+let white_gradient = ['#ffffff', '#ffffff', '#ffffff'];
+let viridis_gradient = ['#440154', '#482475', '#414487', '#355f8d', '#2a788e', '#21908d', '#22a884', '#42be71', '#7ad151', '#bddf26', '#bddf26'];
+let magma_gradient = ['#000004', '#140e36', '#3b0f70', '#641a80', '#8c2981', '#b5367a', '#de4968', '#f66e5c', '#fe9f6d', '#fecf92', '#fecf92'];
+let megatron_gradient = ['#6e40aa', '#be3caf', '#fe4b83', '#ff7747', '#e3b62f', '#b0ef5a', '#53f666', '#1edfa2', '#23acd8', '#4c6fdc', '#4c6fdc'];
+let spectral_gradient = ['#9e0142', '#d13b4b', '#f0704a', '#fcab63', '#fedc8c', '#fbf8b0', '#e0f3a1', '#aadda2', '#69bda9', '#4288b5', '#4288b5'];
+let jShine_gradient = ['#12c2e9', '#c471ed', '#f64f59'];
 
+let gradientIndex = 0;
 let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient];
-let mainGradient = gradients[0];
-
+let mainGradient = GradientGenerator.createGradient(gradients[0]);
 
 //---------------------------------------------------------------------------
 //UX logic
@@ -95,7 +96,8 @@ function chooseGradientUi(index) {
         oldcheckmark = document.getElementById("checkmark" + lastGradient);
 
         lastGradient = index;
-        mainGradient = gradients[index];
+        gradientIndex = index;
+        mainGradient = GradientGenerator.createGradient(gradients[index]);
 
         checkmark.classList.remove('opacity-0');
         checkmark.classList.add('opacity-100');
@@ -133,6 +135,10 @@ function YStepInputF(val) {
 }
 function downloadPdf() {
     makePDF();
+}
+function toggleCheckbox() {
+    verticalGradientBool = !verticalGradientBool;
+    Draw();
 }
 //changes the y value and 
 function changeY(val) {
@@ -205,10 +211,18 @@ function Render3DFunction(f) {
         Ctx.lineTo(((10) + layerIndex * plotLayerOffsetX) + (Width - plotWidth) * 0.5, ((plotHeight - 25) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin);
         Ctx.closePath();
         Ctx.stroke();
-        Ctx.fillStyle = mainGradient.getColorHexAt(mapRange(index, miny, maxy, 0, 1));
+        if (verticalGradientBool) {
+            let grd = Ctx.createLinearGradient(0, ((plotHeight - 25) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin, 0, (((plotHeight - 25) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin) - plotHeight + 75);
+            for (let index = 0; index < gradients[gradientIndex].length; index++) {
+                grd.addColorStop(index / gradients[gradientIndex].length, gradients[gradientIndex][index]);
+            }
+            Ctx.fillStyle = grd;
+        } else {
+            Ctx.fillStyle = mainGradient.getColorHexAt(mapRange(index, miny, maxy, 0, 1));
+        }
+
         Ctx.fill();
     }
-
 }
 
 //---------------------------------------------------------------------------
@@ -216,7 +230,7 @@ function Render3DFunction(f) {
 function PDFRenderFunction(f) {
     var first = true;
     CtxPdf.fillStyle = "white";
-    CtxPdf.fillRect(0, 0, Canvas.width, Canvas.height);
+    CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
     CtxPdf.fillStyle = "black";
     CtxPdf.strokeStyle = "black";
     CtxPdf.lineWidth = 8;
@@ -236,15 +250,32 @@ function PDFRenderFunction(f) {
     CtxPdf.lineTo(10, Canvas.height - 10);
     CtxPdf.closePath();
     CtxPdf.stroke();
-    CtxPdf.fillStyle = mainGradient.getColorHexAt(mapRange(y, miny, maxy, 0, 1));
-    CtxPdf.fill();
-
-    CtxPdf.fillStyle = "black";
-    let gradientcolor = mainGradient.getColorAt(mapRange(y, miny, maxy, 0, 1));
-    if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
-        CtxPdf.fillStyle = "white";
-        CtxPdf.strokeStyle = "white";
+    if (verticalGradientBool) {
+        let grd = CtxPdf.createLinearGradient(0, 400, 0, 75);
+        for (let index = 0; index < gradients[gradientIndex].length; index++) {
+            grd.addColorStop(index / gradients[gradientIndex].length, gradients[gradientIndex][index]);
+        }
+        CtxPdf.fillStyle = grd;
+        CtxPdf.fill();
+        CtxPdf.fillStyle = "black";
+        let gradientcolor = hexToRgb(gradients[gradientIndex][0]);
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
+            CtxPdf.fillStyle = "white";
+            CtxPdf.strokeStyle = "white";
+        }
+    } else {
+        CtxPdf.fillStyle = mainGradient.getColorHexAt(mapRange(y, miny, maxy, 0, 1));
+        CtxPdf.fill();
+        CtxPdf.fillStyle = "black";
+        let gradientcolor = mainGradient.getColorAt(mapRange(y, miny, maxy, 0, 1));
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
+            CtxPdf.fillStyle = "white";
+            CtxPdf.strokeStyle = "white";
+        }
     }
+
+
+
     CtxPdf.beginPath();
     //left cut
     CtxPdf.moveTo((Canvas.width / 4), Canvas.height - 10);
@@ -261,9 +292,10 @@ function PDFRenderFunction(f) {
 
 //renders the strips.
 function renderSetup() {
-    let ysize = (maxy - miny) / Canvas.width;
+    //let ysize = Canvas.width / (maxx - minx);
+    PdfCanvas.height = (totalIndex + 1) * 15 + 15;
     CtxPdf.fillStyle = "white";
-    CtxPdf.fillRect(0, 0, Canvas.width, Canvas.height);
+    CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
     CtxPdf.fillStyle = "black";
     CtxPdf.lineWidth = 3;
     CtxPdf.beginPath();
@@ -307,19 +339,22 @@ function makePDF() {
     }
     renderSetup();
     var imgData = PdfCanvas.toDataURL("image/jpeg", 1);
+    let stripheight = PdfCanvas.height;
+    PdfCanvas.height = 400;
+    //TODO: have to change the height of the images dynamicaly later!!!!!! PdfCanvas.height / 3.5
     if (totalIndex % 2 == 0) {
         if ((pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
+            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1, PdfCanvas.width / 5.5, stripheight / 3.5);
         } else {
             pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, Canvas.width / 5.5, Canvas.height / 3.5);
+            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, Canvas.width / 5.5, stripheight / 3.5);
         }
     } else {
         if ((pdfYMargin + (PdfCanvas.height / 5.5) * countOdd) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-            pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
+            pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, stripheight / 3.5);
         } else {
             pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
+            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, PdfCanvas.width / 5.5, stripheight / 3.5);
         }
 
     }
@@ -525,4 +560,12 @@ function mapRange(value, a, b, c, d) {
     value = (value - a) / (b - a);
     // then map it from (0..1) to (c..d) and return it
     return c + value * (d - c);
+}
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }
