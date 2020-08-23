@@ -8,14 +8,8 @@
     <link rel="icon" type="image/svg+xml" href="assets/inconforplotter.svg">
     <link rel="stylesheet" href="./build/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
-        integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
-        crossorigin="anonymous"> </script>
-    <script src="https://unpkg.com/mathjs@6.6.4/dist/math.min.js"></script>
     <script async defer SameSite=None Secure data-domain="felixboiii.github.io/paper-plotter"
         src="https://plausible.io/js/plausible.js"></script>
-    <script src="gradient-generator.js"></script>
-    <script src="canvas2svg.js"></script>
 </head>
 
 <body class="bg-white w-full h-full m-0 p-0 overflow-x-hidden">
@@ -293,10 +287,9 @@
         </div>
     </div>
 
-    <div id="svgPlotter">
+    <div id="svgPlotter" class="hidden">
 
     </div>
-
     <div class="pt-32 flex items-center justify-center" id="premade-functions">
         <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Example functions</h1>
     </div>
@@ -399,6 +392,11 @@
             </div>
         </div>
     </div>
+    <script src="jspdf.umd.min.js"> </script>
+    <script src="math.min.js"></script>
+    <script src="gradient-generator.js"></script>
+    <script src="canvas2svg.js"></script>
+    <script src="svg2pdf.js"></script>
     <script src="app.js"></script>
 </body>
 

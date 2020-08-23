@@ -1,3 +1,4 @@
+
 // To be called when the page finishes loading:
 window.addEventListener("load", function () {
     XSTEP = (MaxX() - MinX()) / Width;
@@ -6,6 +7,8 @@ window.addEventListener("load", function () {
 
 //---------------------------------------------------------------------------
 //all variables
+const { jsPDF } = window.jspdf;
+const DOMPurify = window.DOMPurify;
 //initialization for the canvas for the PDF
 let PdfCanvas = document.getElementById('download-canvas');
 let CtxPdf = PdfCanvas.getContext('2d');
@@ -134,7 +137,10 @@ function YStepInputF(val) {
     updateTotalLayers();
 }
 function downloadPdf() {
-    makePDF();
+    //createSvg(F);
+    createVectorPDF();
+    //makePDF();
+
 }
 function toggleCheckbox() {
     verticalGradientBool = !verticalGradientBool;
@@ -415,21 +421,21 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
     TODO: future functions
 */
 
-/*function createSvg(f) {
-    let ctxx = new C2S(500, 400);
-
+function createSvg(f) {
+    let ctxx = new C2S(300, 240);
+    ctxx.scale(0.58);
     var first = true;
     ctxx.fillStyle = "black";
-    ctxx.strokeStyle = "black";
-    ctxx.lineWidth = 8;
+    ctxx.strokeStyle = "blue";
+    ctxx.lineWidth = 1;
     ctxx.beginPath();
     for (let x = MinX(); x <= (MaxX() + 0.1); x += XSTEP * 5) {
         let z = parsedExpression.evaluate({ x: x, y: y });
         if (first) {
-            ctxx.moveTo(XC(x).toFixed(2), YC(z).toFixed(2));
+            ctxx.moveTo(XC(x).toFixed(2), ZC(z).toFixed(2));
             first = false;
         } else {
-            ctxx.lineTo(XC(x).toFixed(2), YC(z).toFixed(2));
+            ctxx.lineTo(XC(x).toFixed(2), ZC(z).toFixed(2));
         }
     }
     //right
@@ -450,68 +456,27 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
     ctxx.lineTo(10, Canvas.height - 10);
     ctxx.closePath();
     ctxx.stroke();
-    ctxx.fillStyle = mainGradient.getColorHexAt(mapRange(y, minYInput, maxYInput, 0, 1));
-    ctxx.fill();
 
-    ctxx.fillStyle = "black";
-    ctxx.font = "24px Roboto";
-    ctxx.fillText("y=" + y.toFixed(2), 210, 340);
-    //console.log(ctxx.getSerializedSvg(true));
-    return ctxx.getSerializedSvg(true);
+    document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
 }
 
-function makeVecPDF() {
-    var pdf = new jsPDF();
-    svgData = createSvg(F);
-    console.log(svgData);
-    pdf.addSvg(svgData, 50, 50, 500, 400);
-    /*let countEven = 0;
-    let countOdd = 0;
-    totalIndex = 0
-    for (let index = minYInput; index <= maxYInput; index += YSTEP) {
-        y = index;
-        //pageAm++;
+function createVectorPDF() {
+    let pdf = new jsPDF('p', 'pt', 'a4');
 
-        var svgData = createSvg(F);
+    createSvg();
+    const element = document.getElementById('svgPlotter').children[0];
+    pdf.svg(element, {
+        width: 500,
+        height: 400,
+    })
 
-        if (totalIndex % 2 == 0) {
-            if (totalIndex % 8 == 0 && countEven != 0) {
-                pdf.addPage();
-                countEven = 0;
-                countOdd = 0;
-            }
-            pdf.addSvg(svgData, pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5);
-            countEven++;
-        } else {
-            pdf.addSvg(svgData, pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5, 500, 400);
-            countOdd++;
-        }
 
-        totalIndex++;
-    }*/
-
-//
-/*renderSetup();
-var imgData = PdfCanvas.toDataURL("image/jpeg", 1);
-if (totalIndex % 2 == 0) {
-    if ((pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
-    } else {
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, Canvas.width / 5.5, Canvas.height / 3.5);
-    }
-} else {
-    if ((pdfYMargin + (PdfCanvas.height / 5.5) * countOdd) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-        pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
-    } else {
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
-    }
+        .then(() => {
+            // save the created pdf
+            pdf.save('myPDF.pdf')
+        })
 
 }
-
-pdf.save("3d-Function-Paper-Cutout.pdf");
-}*/
 
 //---------------------------------------------------------------------------
 //canvas calculations
