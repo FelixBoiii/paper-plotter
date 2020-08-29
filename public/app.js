@@ -40,6 +40,7 @@ let XSTEP;
 let YSTEP = 1;
 let totalIndex = 0;
 
+let vScale = 0.55;
 let materialThickness = 4;
 //other initialization for the 3D canvas
 //width and height of the 3D view plot
@@ -137,10 +138,10 @@ function YStepInputF(val) {
     updateTotalLayers();
 }
 function downloadPdf() {
-    //createSvg(F);
+    makePDF();
+}
+function downloadVec() {
     createVectorPDF();
-    //makePDF();
-
 }
 function toggleCheckbox() {
     verticalGradientBool = !verticalGradientBool;
@@ -164,6 +165,17 @@ function checkTotalLayers() {
     updateTotalLayers();
 
 }
+function checkExtraFunctionHeight(indexH) {
+    let highestPoint = Canvas.height;
+    for (let x = MinX(); x <= MaxX(); x += XSTEP) {
+        let z = ZC(parsedExpression.evaluate({ x: x, y: y }));
+        if (z < highestPoint) {
+            highestPoint = z;
+        }
+    }
+    return ~~highestPoint;
+}
+
 function checkFunctionHeight(f) {
     for (let x = MinX(); x <= MaxX(); x += XSTEP) {
         let z = parsedExpression.evaluate({ x: x, y: y });
@@ -422,14 +434,15 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
 */
 
 function createSvg(f) {
-    let ctxx = new C2S(300, 240);
-    ctxx.scale(0.58);
-    var first = true;
-    ctxx.fillStyle = "black";
-    ctxx.strokeStyle = "blue";
+    let ExtraFunctionHeight = checkExtraFunctionHeight();
+    let ctxx = new C2S(500, 400 - ExtraFunctionHeight);
+    ctxx.scale(vScale);
+    ctxx.transform(1, 0, 0, 1, 0, -ExtraFunctionHeight);
+    let first = true;
+    ctxx.strokeStyle = "black";
     ctxx.lineWidth = 1;
     ctxx.beginPath();
-    for (let x = MinX(); x <= (MaxX() + 0.1); x += XSTEP * 5) {
+    for (let x = MinX(); x <= (MaxX() + 0.1); x += XSTEP * 2) {
         let z = parsedExpression.evaluate({ x: x, y: y });
         if (first) {
             ctxx.moveTo(XC(x).toFixed(2), ZC(z).toFixed(2));
@@ -456,26 +469,108 @@ function createSvg(f) {
     ctxx.lineTo(10, Canvas.height - 10);
     ctxx.closePath();
     ctxx.stroke();
-
+    document.getElementById('svgPlotter').innerHTML = '';
     document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
+    return ExtraFunctionHeight;
 }
 
-function createVectorPDF() {
+function renderSetupSVG() {
+    //let ysize = Canvas.width / (maxx - minx);
+    let totalAm = (maxy - miny) / YSTEP;
+    let materialChange = materialThickness / 3;
+    let ctxx = new C2S(500, (totalAm + 1) * 15 + materialChange * totalAm * 0.5 + 15);
+    ctxx.strokeStyle = "black";
+    ctxx.lineWidth = 1;
+    ctxx.scale(vScale);
+    ctxx.transform(1, 0, 0, 1.5, 0, 0);
+    ctxx.beginPath();
+
+    ctxx.moveTo(10, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(150, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(150, 10);
+    ctxx.lineTo(10, 10);
+    for (let index = 0; index <= totalAm; index++) {
+        ctxx.lineTo(10, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(60, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(60, 15 * (index + 1) + 10 + materialChange);
+        ctxx.lineTo(10, 15 * (index + 1) + 10 + materialChange);
+    }
+    ctxx.closePath();
+    ctxx.stroke();
+
+    ctxx.beginPath();
+    ctxx.moveTo(190, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(330, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(330, 10);
+    ctxx.lineTo(190, 10);
+    for (let index = 0; index <= totalAm; index++) {
+        ctxx.lineTo(190, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(240, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(240, 15 * (index + 1) + 10 + materialChange);
+        ctxx.lineTo(190, 15 * (index + 1) + 10 + materialChange);
+    }
+    ctxx.closePath();
+    ctxx.stroke();
+    document.getElementById('svgPlotter').innerHTML = '';
+    document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
+    return (totalAm + 1) * 15 + materialChange * totalAm * 0.5 + 15;
+}
+
+async function createVectorPDF() {
     let pdf = new jsPDF('p', 'pt', 'a4');
+    let heightOfSvg = 20;
+    let widthOfSvg = 0;
+    let totalHeight = 0;
+    let oldExtraFunctionHeight = 0;
+    let ymargin = 0;
+    let ExtraFunctionHeight;
+    for (let index = miny; index <= maxy; index += YSTEP) {
+        y = index;
+        ExtraFunctionHeight = createSvg();
+        const element = document.getElementById('svgPlotter').children[0];
+        if (totalHeight + 220 - ExtraFunctionHeight * vScale + ymargin + 20 > pdf.internal.pageSize.getHeight()) {
+            heightOfSvg = 15;
+            totalHeight = 0;
+            oldExtraFunctionHeight = 0;
+            if (widthOfSvg != 275) {
+                widthOfSvg = 275;
+            } else {
+                widthOfSvg = 0;
+                pdf.addPage();
+            }
+        } else if (y != miny) {
+            heightOfSvg += 220 - oldExtraFunctionHeight * vScale;
+        }
 
-    createSvg();
-    const element = document.getElementById('svgPlotter').children[0];
-    pdf.svg(element, {
-        width: 500,
-        height: 400,
-    })
-
-
-        .then(() => {
-            // save the created pdf
-            pdf.save('myPDF.pdf')
+        await pdf.svg(element, {
+            x: widthOfSvg + 15,
+            y: heightOfSvg + ymargin,
+            width: 275,
+            height: 220 - ExtraFunctionHeight * vScale,
         })
-
+        totalHeight += 220 - ExtraFunctionHeight * vScale + ymargin;
+        oldExtraFunctionHeight = ExtraFunctionHeight;
+    }
+    heightOfSvg += 220 - oldExtraFunctionHeight * vScale
+    let setupHeight = renderSetupSVG();
+    const element = document.getElementById('svgPlotter').children[0];
+    if (totalHeight + setupHeight + 10 > pdf.internal.pageSize.getHeight()) {
+        heightOfSvg = 15;
+        totalHeight = 0;
+        oldExtraFunctionHeight = 0;
+        if (widthOfSvg != 275) {
+            widthOfSvg = 275;
+        } else {
+            widthOfSvg = 0;
+            pdf.addPage();
+        }
+    }
+    await pdf.svg(element, {
+        x: widthOfSvg + 15,
+        y: heightOfSvg + ymargin,
+        width: 300,
+    })
+    pdf.save('myPDF.pdf');
 }
 
 //---------------------------------------------------------------------------
