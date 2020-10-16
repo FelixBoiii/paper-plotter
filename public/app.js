@@ -40,8 +40,9 @@ let XSTEP;
 let YSTEP = 1;
 let totalIndex = 0;
 
+let size = 2;
 let vScale = 0.55;
-let materialThickness = 4;
+let materialThickness = 3;
 //other initialization for the 3D canvas
 //width and height of the 3D view plot
 let plotWidth = 400;
@@ -63,9 +64,10 @@ let magma_gradient = ['#000004', '#140e36', '#3b0f70', '#641a80', '#8c2981', '#b
 let megatron_gradient = ['#6e40aa', '#be3caf', '#fe4b83', '#ff7747', '#e3b62f', '#b0ef5a', '#53f666', '#1edfa2', '#23acd8', '#4c6fdc', '#4c6fdc'];
 let spectral_gradient = ['#9e0142', '#d13b4b', '#f0704a', '#fcab63', '#fedc8c', '#fbf8b0', '#e0f3a1', '#aadda2', '#69bda9', '#4288b5', '#4288b5'];
 let jShine_gradient = ['#12c2e9', '#c471ed', '#f64f59'];
+let jShine2_gradient = ['#202020', '#ffffff'];
 
 let gradientIndex = 0;
-let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient];
+let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient, jShine2_gradient];
 let mainGradient = GradientGenerator.createGradient(gradients[0]);
 
 //---------------------------------------------------------------------------
@@ -138,7 +140,7 @@ function YStepInputF(val) {
     updateTotalLayers();
 }
 function downloadPdf() {
-    makePDF();
+    createVectorPDF();
 }
 function downloadVec() {
     createVectorPDF();
@@ -207,11 +209,15 @@ function Draw() {
 function Render3DFunction(f) {
     var first = true;
     let layerIndex;
-    Ctx.fillStyle = "#63B3ED";
+    Ctx.fillStyle = "#63B3ED";//63B3ED
+
     Ctx.fillRect(0, 0, Canvas.width, Canvas.height);
     for (let index = miny; index <= maxy; index += YSTEP) {
         layerIndex = rangeNumbers(index, miny, maxy, -10, 10);
-        Ctx.fillStyle = "black";
+        //Ctx.fillStyle = "black";
+        Ctx.fillStyle = mainGradient.getColorHexAt(mapRange(index, miny, maxy, 0, 1));
+        Ctx.strokeStyle = "#000000"
+        //
         Ctx.lineWidth = 4;
         Ctx.beginPath();
         for (let x = MinX(); x <= MaxX(); x += XSTEP) {
@@ -245,7 +251,7 @@ function Render3DFunction(f) {
 
 //---------------------------------------------------------------------------
 //All the PDF functions
-function PDFRenderFunction(f) {
+/*function PDFRenderFunction(f) {
     var first = true;
     CtxPdf.fillStyle = "white";
     CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
@@ -378,7 +384,7 @@ function makePDF() {
     }
 
     pdf.save("3d-Function-Paper-Cutout.pdf");
-}
+}*/
 
 //---------------------------------------------------------------------------
 //if an error occures
@@ -436,13 +442,14 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
 function createSvg(f) {
     let ExtraFunctionHeight = checkExtraFunctionHeight();
     let ctxx = new C2S(500, 400 - ExtraFunctionHeight);
+    let colorOfText = "black"
     ctxx.scale(vScale);
     ctxx.transform(1, 0, 0, 1, 0, -ExtraFunctionHeight);
     let first = true;
     ctxx.strokeStyle = "black";
     ctxx.lineWidth = 1;
     ctxx.beginPath();
-    for (let x = MinX(); x <= (MaxX() + 0.1); x += XSTEP * 2) {
+    for (let x = MinX(); x <= (MaxX()); x += XSTEP * 1) {
         let z = parsedExpression.evaluate({ x: x, y: y });
         if (first) {
             ctxx.moveTo(XC(x).toFixed(2), ZC(z).toFixed(2));
@@ -467,15 +474,44 @@ function createSvg(f) {
     ctxx.lineTo((Canvas.width / 4) - materialChange, Canvas.height - 10);
     //bottom
     ctxx.lineTo(10, Canvas.height - 10);
+    ////
+    if (verticalGradientBool) {
+        let grd = ctxx.createLinearGradient(0, 400, 0, 75);
+        for (let index = 0; index < gradients[gradientIndex].length; index++) {
+            grd.addColorStop(index / gradients[gradientIndex].length, gradients[gradientIndex][index]);
+        }
+        ctxx.fillStyle = grd;
+        ctxx.fill();
+        let gradientcolor = hexToRgb(gradients[gradientIndex][0]);
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) colorOfText = "white";
+    } else {
+        ctxx.fillStyle = mainGradient.getColorHexAt(mapRange(y, miny, maxy, 0, 1));
+        ctxx.fill();
+        let gradientcolor = mainGradient.getColorAt(mapRange(y, miny, maxy, 0, 1));
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) colorOfText = "white";
+    }
+    ///
     ctxx.closePath();
     ctxx.stroke();
+
+    if (y - miny + 1 == 21 && document.getElementById('function-code').value.toLowerCase() == "(sin(sqrt(x^2+y^2)))/(sqrt(x^2+y^2))") {
+        var imgg = new Image;
+        imgg.src = 'assets/svgis.svg';
+        ctxx.drawImage(imgg, 152, 290, 195, 65);
+    } else {
+        ctxx.strokeStyle = colorOfText;
+        ctxx.font = "22px Arial";
+        ctxx.fillStyle = colorOfText;
+        ctxx.textAlign = "center";
+        ctxx.fillText(~~totalIndex, Canvas.width - 45, Canvas.height - 32);
+    }
+
     document.getElementById('svgPlotter').innerHTML = '';
     document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
     return ExtraFunctionHeight;
 }
 
 function renderSetupSVG() {
-    //let ysize = Canvas.width / (maxx - minx);
     let totalAm = (maxy - miny) / YSTEP;
     let materialChange = materialThickness / 3;
     let ctxx = new C2S(500, (totalAm + 1) * 15 + materialChange * totalAm * 0.5 + 15);
@@ -522,9 +558,11 @@ async function createVectorPDF() {
     let widthOfSvg = 0;
     let totalHeight = 0;
     let oldExtraFunctionHeight = 0;
-    let ymargin = 0;
+    let ymargin = 5;
     let ExtraFunctionHeight;
+    totalIndex = 0;
     for (let index = miny; index <= maxy; index += YSTEP) {
+        totalIndex++;
         y = index;
         ExtraFunctionHeight = createSvg();
         const element = document.getElementById('svgPlotter').children[0];
@@ -571,6 +609,7 @@ async function createVectorPDF() {
         width: 300,
     })
     pdf.save('myPDF.pdf');
+    totalIndex = 0;
 }
 
 //---------------------------------------------------------------------------
