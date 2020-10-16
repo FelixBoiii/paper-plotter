@@ -8,14 +8,8 @@
     <link rel="icon" type="image/svg+xml" href="assets/inconforplotter.svg">
     <link rel="stylesheet" href="./build/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
-        integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
-        crossorigin="anonymous"> </script>
-    <script src="https://unpkg.com/mathjs@6.6.4/dist/math.min.js"></script>
     <script async defer SameSite=None Secure data-domain="felixboiii.github.io/paper-plotter"
         src="https://plausible.io/js/plausible.js"></script>
-    <script src="gradient-generator.js"></script>
-    <script src="canvas2svg.js"></script>
 </head>
 
 <body class="bg-white w-full h-full m-0 p-0 overflow-x-hidden">
@@ -164,6 +158,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <!--//-->
@@ -256,13 +251,13 @@
 
                         </div>
 
-                        <div class="flex mt-4 mb-2 lg-mn-0">
+                        <div class="mt-4 mb-2 lg-mn-0">
                             <button onclick="Draw();"
-                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
+                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-3 border border-gray-400 rounded-lg shadow-lg">
                                 Draw function
                             </button>
                             <button onclick="downloadPdf()"
-                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 border border-gray-400 rounded-lg shadow-lg">
+                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-3 border border-gray-400 rounded-lg shadow-lg">
                                 Download PDF
                             </button>
                         </div>
@@ -293,10 +288,9 @@
         </div>
     </div>
 
-    <div id="svgPlotter">
+    <div id="svgPlotter" class="hidden">
 
     </div>
-
     <div class="pt-32 flex items-center justify-center" id="premade-functions">
         <h1 class="text-5xl text-blue-400 text-center" style="font-family: Nunito;">Example functions</h1>
     </div>
@@ -380,10 +374,10 @@
 
     </div>
     <div class="bg-gray-700" id="about">
-        <div class="flex flex-col md:flex-row items-center justify-center px-6 py-12 md:px-24 text-white">
+        <div class="flex flex-col md:flex-row justify-center px-6 py-12 md:px-24 text-white">
             <div class="text-xl w-auto xl:w-1/4 align-top">
                 <h1 class="font-semibold">about:</h1>
-                <p>This website is a hobby project of mine. If you would like to support this project and help it
+                <p>This website is a hobby project of mine. I am Felix a 16 year old with a bit too much free time because of covid. If you would like to support this project and help it
                     improve in the future, i would really appreciate it if you would donate</p>
                 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=96GCG398ZHKE2&source=url"><button
                         class="mt-2 px-2 bg-gray-700 text-gray-500 font-semibold border-4 border-gray-500 rounded-lg shadow-lg">
@@ -399,6 +393,11 @@
             </div>
         </div>
     </div>
+    <script src="jspdf.umd.min.js"> </script>
+    <script src="math.min.js"></script>
+    <script src="gradient-generator.js"></script>
+    <script src="canvas2svg.js"></script>
+    <script src="svg2pdf.js"></script>
     <script src="app.js"></script>
 </body>
 

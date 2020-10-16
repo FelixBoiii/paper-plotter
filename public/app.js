@@ -1,3 +1,4 @@
+
 // To be called when the page finishes loading:
 window.addEventListener("load", function () {
     XSTEP = (MaxX() - MinX()) / Width;
@@ -6,6 +7,8 @@ window.addEventListener("load", function () {
 
 //---------------------------------------------------------------------------
 //all variables
+const { jsPDF } = window.jspdf;
+const DOMPurify = window.DOMPurify;
 //initialization for the canvas for the PDF
 let PdfCanvas = document.getElementById('download-canvas');
 let CtxPdf = PdfCanvas.getContext('2d');
@@ -37,7 +40,9 @@ let XSTEP;
 let YSTEP = 1;
 let totalIndex = 0;
 
-let materialThickness = 4;
+let size = 2;
+let vScale = 0.55;
+let materialThickness = 3;
 //other initialization for the 3D canvas
 //width and height of the 3D view plot
 let plotWidth = 400;
@@ -59,9 +64,10 @@ let magma_gradient = ['#000004', '#140e36', '#3b0f70', '#641a80', '#8c2981', '#b
 let megatron_gradient = ['#6e40aa', '#be3caf', '#fe4b83', '#ff7747', '#e3b62f', '#b0ef5a', '#53f666', '#1edfa2', '#23acd8', '#4c6fdc', '#4c6fdc'];
 let spectral_gradient = ['#9e0142', '#d13b4b', '#f0704a', '#fcab63', '#fedc8c', '#fbf8b0', '#e0f3a1', '#aadda2', '#69bda9', '#4288b5', '#4288b5'];
 let jShine_gradient = ['#12c2e9', '#c471ed', '#f64f59'];
+let jShine2_gradient = ['#202020', '#ffffff'];
 
 let gradientIndex = 0;
-let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient];
+let gradients = [white_gradient, viridis_gradient, magma_gradient, megatron_gradient, spectral_gradient, jShine_gradient, jShine2_gradient];
 let mainGradient = GradientGenerator.createGradient(gradients[0]);
 
 //---------------------------------------------------------------------------
@@ -134,7 +140,10 @@ function YStepInputF(val) {
     updateTotalLayers();
 }
 function downloadPdf() {
-    makePDF();
+    createVectorPDF();
+}
+function downloadVec() {
+    createVectorPDF();
 }
 function toggleCheckbox() {
     verticalGradientBool = !verticalGradientBool;
@@ -158,6 +167,17 @@ function checkTotalLayers() {
     updateTotalLayers();
 
 }
+function checkExtraFunctionHeight(indexH) {
+    let highestPoint = Canvas.height;
+    for (let x = MinX(); x <= MaxX(); x += XSTEP) {
+        let z = ZC(parsedExpression.evaluate({ x: x, y: y }));
+        if (z < highestPoint) {
+            highestPoint = z;
+        }
+    }
+    return ~~highestPoint;
+}
+
 function checkFunctionHeight(f) {
     for (let x = MinX(); x <= MaxX(); x += XSTEP) {
         let z = parsedExpression.evaluate({ x: x, y: y });
@@ -189,11 +209,15 @@ function Draw() {
 function Render3DFunction(f) {
     var first = true;
     let layerIndex;
-    Ctx.fillStyle = "#63B3ED";
+    Ctx.fillStyle = "#63B3ED";//63B3ED
+
     Ctx.fillRect(0, 0, Canvas.width, Canvas.height);
     for (let index = miny; index <= maxy; index += YSTEP) {
         layerIndex = rangeNumbers(index, miny, maxy, -10, 10);
-        Ctx.fillStyle = "black";
+        //Ctx.fillStyle = "black";
+        Ctx.fillStyle = mainGradient.getColorHexAt(mapRange(index, miny, maxy, 0, 1));
+        Ctx.strokeStyle = "#000000"
+        //
         Ctx.lineWidth = 4;
         Ctx.beginPath();
         for (let x = MinX(); x <= MaxX(); x += XSTEP) {
@@ -227,7 +251,7 @@ function Render3DFunction(f) {
 
 //---------------------------------------------------------------------------
 //All the PDF functions
-function PDFRenderFunction(f) {
+/*function PDFRenderFunction(f) {
     var first = true;
     CtxPdf.fillStyle = "white";
     CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
@@ -360,7 +384,7 @@ function makePDF() {
     }
 
     pdf.save("3d-Function-Paper-Cutout.pdf");
-}
+}*/
 
 //---------------------------------------------------------------------------
 //if an error occures
@@ -415,21 +439,23 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
     TODO: future functions
 */
 
-/*function createSvg(f) {
-    let ctxx = new C2S(500, 400);
-
-    var first = true;
-    ctxx.fillStyle = "black";
+function createSvg(f) {
+    let ExtraFunctionHeight = checkExtraFunctionHeight();
+    let ctxx = new C2S(500, 400 - ExtraFunctionHeight);
+    let colorOfText = "black"
+    ctxx.scale(vScale);
+    ctxx.transform(1, 0, 0, 1, 0, -ExtraFunctionHeight);
+    let first = true;
     ctxx.strokeStyle = "black";
-    ctxx.lineWidth = 8;
+    ctxx.lineWidth = 1;
     ctxx.beginPath();
-    for (let x = MinX(); x <= (MaxX() + 0.1); x += XSTEP * 5) {
+    for (let x = MinX(); x <= (MaxX()); x += XSTEP * 1) {
         let z = parsedExpression.evaluate({ x: x, y: y });
         if (first) {
-            ctxx.moveTo(XC(x).toFixed(2), YC(z).toFixed(2));
+            ctxx.moveTo(XC(x).toFixed(2), ZC(z).toFixed(2));
             first = false;
         } else {
-            ctxx.lineTo(XC(x).toFixed(2), YC(z).toFixed(2));
+            ctxx.lineTo(XC(x).toFixed(2), ZC(z).toFixed(2));
         }
     }
     //right
@@ -448,70 +474,143 @@ document.getElementById("premade-function-button-3").onclick = function () { pre
     ctxx.lineTo((Canvas.width / 4) - materialChange, Canvas.height - 10);
     //bottom
     ctxx.lineTo(10, Canvas.height - 10);
+    ////
+    if (verticalGradientBool) {
+        let grd = ctxx.createLinearGradient(0, 400, 0, 75);
+        for (let index = 0; index < gradients[gradientIndex].length; index++) {
+            grd.addColorStop(index / gradients[gradientIndex].length, gradients[gradientIndex][index]);
+        }
+        ctxx.fillStyle = grd;
+        ctxx.fill();
+        let gradientcolor = hexToRgb(gradients[gradientIndex][0]);
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) colorOfText = "white";
+    } else {
+        ctxx.fillStyle = mainGradient.getColorHexAt(mapRange(y, miny, maxy, 0, 1));
+        ctxx.fill();
+        let gradientcolor = mainGradient.getColorAt(mapRange(y, miny, maxy, 0, 1));
+        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) colorOfText = "white";
+    }
+    ///
     ctxx.closePath();
     ctxx.stroke();
-    ctxx.fillStyle = mainGradient.getColorHexAt(mapRange(y, minYInput, maxYInput, 0, 1));
-    ctxx.fill();
 
-    ctxx.fillStyle = "black";
-    ctxx.font = "24px Roboto";
-    ctxx.fillText("y=" + y.toFixed(2), 210, 340);
-    //console.log(ctxx.getSerializedSvg(true));
-    return ctxx.getSerializedSvg(true);
+    if (y - miny + 1 == 21 && document.getElementById('function-code').value.toLowerCase() == "(sin(sqrt(x^2+y^2)))/(sqrt(x^2+y^2))") {
+        var imgg = new Image;
+        imgg.src = 'assets/svgis.svg';
+        ctxx.drawImage(imgg, 152, 290, 195, 65);
+    } else {
+        ctxx.strokeStyle = colorOfText;
+        ctxx.font = "22px Arial";
+        ctxx.fillStyle = colorOfText;
+        ctxx.textAlign = "center";
+        ctxx.fillText(~~totalIndex, Canvas.width - 45, Canvas.height - 32);
+    }
+
+    document.getElementById('svgPlotter').innerHTML = '';
+    document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
+    return ExtraFunctionHeight;
 }
 
-function makeVecPDF() {
-    var pdf = new jsPDF();
-    svgData = createSvg(F);
-    console.log(svgData);
-    pdf.addSvg(svgData, 50, 50, 500, 400);
-    /*let countEven = 0;
-    let countOdd = 0;
-    totalIndex = 0
-    for (let index = minYInput; index <= maxYInput; index += YSTEP) {
+function renderSetupSVG() {
+    let totalAm = (maxy - miny) / YSTEP;
+    let materialChange = materialThickness / 3;
+    let ctxx = new C2S(500, (totalAm + 1) * 15 + materialChange * totalAm * 0.5 + 15);
+    ctxx.strokeStyle = "black";
+    ctxx.lineWidth = 1;
+    ctxx.scale(vScale);
+    ctxx.transform(1, 0, 0, 1.5, 0, 0);
+    ctxx.beginPath();
+
+    ctxx.moveTo(10, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(150, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(150, 10);
+    ctxx.lineTo(10, 10);
+    for (let index = 0; index <= totalAm; index++) {
+        ctxx.lineTo(10, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(60, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(60, 15 * (index + 1) + 10 + materialChange);
+        ctxx.lineTo(10, 15 * (index + 1) + 10 + materialChange);
+    }
+    ctxx.closePath();
+    ctxx.stroke();
+
+    ctxx.beginPath();
+    ctxx.moveTo(190, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(330, (totalAm + 1) * 15 + materialChange * totalAm * 0.8 + 5);
+    ctxx.lineTo(330, 10);
+    ctxx.lineTo(190, 10);
+    for (let index = 0; index <= totalAm; index++) {
+        ctxx.lineTo(190, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(240, 15 * (index + 1) + 10 - materialChange);
+        ctxx.lineTo(240, 15 * (index + 1) + 10 + materialChange);
+        ctxx.lineTo(190, 15 * (index + 1) + 10 + materialChange);
+    }
+    ctxx.closePath();
+    ctxx.stroke();
+    document.getElementById('svgPlotter').innerHTML = '';
+    document.getElementById('svgPlotter').insertAdjacentHTML('beforeend', ctxx.getSerializedSvg(true));
+    return (totalAm + 1) * 15 + materialChange * totalAm * 0.5 + 15;
+}
+
+async function createVectorPDF() {
+    let pdf = new jsPDF('p', 'pt', 'a4');
+    let heightOfSvg = 20;
+    let widthOfSvg = 0;
+    let totalHeight = 0;
+    let oldExtraFunctionHeight = 0;
+    let ymargin = 5;
+    let ExtraFunctionHeight;
+    totalIndex = 0;
+    for (let index = miny; index <= maxy; index += YSTEP) {
+        totalIndex++;
         y = index;
-        //pageAm++;
-
-        var svgData = createSvg(F);
-
-        if (totalIndex % 2 == 0) {
-            if (totalIndex % 8 == 0 && countEven != 0) {
+        ExtraFunctionHeight = createSvg();
+        const element = document.getElementById('svgPlotter').children[0];
+        if (totalHeight + 220 - ExtraFunctionHeight * vScale + ymargin + 20 > pdf.internal.pageSize.getHeight()) {
+            heightOfSvg = 15;
+            totalHeight = 0;
+            oldExtraFunctionHeight = 0;
+            if (widthOfSvg != 275) {
+                widthOfSvg = 275;
+            } else {
+                widthOfSvg = 0;
                 pdf.addPage();
-                countEven = 0;
-                countOdd = 0;
             }
-            pdf.addSvg(svgData, pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5);
-            countEven++;
-        } else {
-            pdf.addSvg(svgData, pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5, 500, 400);
-            countOdd++;
+        } else if (y != miny) {
+            heightOfSvg += 220 - oldExtraFunctionHeight * vScale;
         }
 
-        totalIndex++;
-    }*/
-
-//
-/*renderSetup();
-var imgData = PdfCanvas.toDataURL("image/jpeg", 1);
-if (totalIndex % 2 == 0) {
-    if ((pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
-    } else {
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, Canvas.width / 5.5, Canvas.height / 3.5);
+        await pdf.svg(element, {
+            x: widthOfSvg + 15,
+            y: heightOfSvg + ymargin,
+            width: 275,
+            height: 220 - ExtraFunctionHeight * vScale,
+        })
+        totalHeight += 220 - ExtraFunctionHeight * vScale + ymargin;
+        oldExtraFunctionHeight = ExtraFunctionHeight;
     }
-} else {
-    if ((pdfYMargin + (PdfCanvas.height / 5.5) * countOdd) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-        pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
-    } else {
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, PdfCanvas.width / 5.5, PdfCanvas.height / 3.5);
+    heightOfSvg += 220 - oldExtraFunctionHeight * vScale
+    let setupHeight = renderSetupSVG();
+    const element = document.getElementById('svgPlotter').children[0];
+    if (totalHeight + setupHeight + 10 > pdf.internal.pageSize.getHeight()) {
+        heightOfSvg = 15;
+        totalHeight = 0;
+        oldExtraFunctionHeight = 0;
+        if (widthOfSvg != 275) {
+            widthOfSvg = 275;
+        } else {
+            widthOfSvg = 0;
+            pdf.addPage();
+        }
     }
-
+    await pdf.svg(element, {
+        x: widthOfSvg + 15,
+        y: heightOfSvg + ymargin,
+        width: 300,
+    })
+    pdf.save('myPDF.pdf');
+    totalIndex = 0;
 }
-
-pdf.save("3d-Function-Paper-Cutout.pdf");
-}*/
 
 //---------------------------------------------------------------------------
 //canvas calculations
