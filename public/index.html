@@ -158,7 +158,11 @@
                                 </div>
                             </div>
                         </div>
-
+                        <input id="uploadHeightMap" type="file" />
+                        <button onclick="DrawHeightMap()"
+                                class="bg-white hover:bg-gray-100 text-gray-800 font-semibold mr-6 py-3 px-3 border border-gray-400 rounded-lg shadow-lg">
+                                Heightmap
+                            </button>
                     </div>
 
                     <!--//-->
@@ -266,11 +270,13 @@
                         <canvas id="graph-canvas" class="m-0 w-canwsm h-canhsm sm:w-canwl sm:h-canhl" width="500"
                             height="400"></canvas>
                         <canvas id="download-canvas" class="hidden" width="500" height="400"></canvas>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <canvas id="heightMap-canvas" class="" width="500" height="500"></canvas>
     <div class="flex items-center justify-center" id="error-message">
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative md:max-w-screen-lg w-full md:w-9/12 md:mx-0 lg:w-full"
             role="alert">
@@ -329,8 +335,31 @@
                 </button>
             </div>
         </div>
-
     </div>
+
+    <div class="pt-4 flex items-center justify-center" id="plotty">
+        <div class="flex flex-row">
+            <div class="bg-blue-400 pl-8 pt-5 pr-8 pb-8 rounded-3xl" style="border-radius: 1.5rem; width:25rem; margin-left: 5rem;">
+                <h1 class="text-5xl text-white" style="font-family: Nunito;">Plotty</h1>
+                <h1 class="text-lg text-white font-semibold">Plotty is a beautiful double sized hardboard lasercut function kit that i created and sell on etsy!</br></br>
+                    - Size: 13 x 13 x 11 cm.</br>
+                    - Material: 1mm hardboard.</br>
+                    - Simple assembly.</br>
+                    - Beautiful home decor.</br>
+                    - Nice nerdy gift.
+                    </h1>
+                    <button
+                    class="h-12 px-4 mt-4 bg-white hover:bg-gray-100 text-blue-500 text-xl border border-gray-400 rounded-lg shadow-lg" style="font-family: Nunito;">
+                    Buy Now!
+                </button>
+                </div>
+                </div>
+            <div class="transform -translate-x-20">
+                <img src="assets/plotty_vb.png" alt="">
+            </div>
+        </div>
+    </div>
+
     <img class="w-screen transform rotate-180" src="assets/overlay-and-scissor.svg" alt="">
     <div class="bg-blue-400" style="margin-top: -1px;">
         <div class="mx-6 sm:mx-24" id="instructions">

@@ -15,6 +15,9 @@ let CtxPdf = PdfCanvas.getContext('2d');
 //initialization for the 3D canvas
 let Canvas = document.getElementById('graph-canvas');
 let Ctx = Canvas.getContext('2d');
+//initialization for the heightmap canvas
+let HeightCanvas = document.getElementById('heightMap-canvas');
+let HeightCtx = HeightCanvas.getContext('2d');
 
 let verticalGradientBool = document.getElementById("verticalGradient").checked;
 
@@ -221,7 +224,8 @@ function Render3DFunction(f) {
         Ctx.lineWidth = 4;
         Ctx.beginPath();
         for (let x = MinX(); x <= MaxX(); x += XSTEP) {
-            let z = parsedExpression.evaluate({ x: x, y: index });
+            //let z = parsedExpression.evaluate({ x: x, y: index });
+            let z = rangeNumbers(getHeight2(x, index, layerIndex), -4, 5, minz, maxz);
             if (first) {
                 Ctx.moveTo((XC3D(x) + layerIndex * plotLayerOffsetX) + (Width - plotWidth) * 0.5, (ZC3D(z) + layerIndex * plotLayerOffsetY) + (Height - plotHeight) * 0.5 + xtraTopMargin);
                 first = false;
@@ -247,144 +251,8 @@ function Render3DFunction(f) {
 
         Ctx.fill();
     }
+    console.log();
 }
-
-//---------------------------------------------------------------------------
-//All the PDF functions
-/*function PDFRenderFunction(f) {
-    var first = true;
-    CtxPdf.fillStyle = "white";
-    CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
-    CtxPdf.fillStyle = "black";
-    CtxPdf.strokeStyle = "black";
-    CtxPdf.lineWidth = 8;
-    CtxPdf.beginPath();
-    for (let x = MinX(); x <= MaxX(); x += XSTEP) {
-        let z = parsedExpression.evaluate({ x: x, y: y });
-        if (first) {
-            CtxPdf.moveTo(XC(x), ZC(z));
-            first = false;
-        } else {
-            CtxPdf.lineTo(XC(x), ZC(z));
-        }
-    }
-    //right
-    CtxPdf.lineTo(Canvas.width - 10, Canvas.height - 10);
-    //bottom
-    CtxPdf.lineTo(10, Canvas.height - 10);
-    CtxPdf.closePath();
-    CtxPdf.stroke();
-    if (verticalGradientBool) {
-        let grd = CtxPdf.createLinearGradient(0, 400, 0, 75);
-        for (let index = 0; index < gradients[gradientIndex].length; index++) {
-            grd.addColorStop(index / gradients[gradientIndex].length, gradients[gradientIndex][index]);
-        }
-        CtxPdf.fillStyle = grd;
-        CtxPdf.fill();
-        CtxPdf.fillStyle = "black";
-        let gradientcolor = hexToRgb(gradients[gradientIndex][0]);
-        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
-            CtxPdf.fillStyle = "white";
-            CtxPdf.strokeStyle = "white";
-        }
-    } else {
-        CtxPdf.fillStyle = mainGradient.getColorHexAt(mapRange(y, miny, maxy, 0, 1));
-        CtxPdf.fill();
-        CtxPdf.fillStyle = "black";
-        let gradientcolor = mainGradient.getColorAt(mapRange(y, miny, maxy, 0, 1));
-        if ((gradientcolor.r * 76.245 + gradientcolor.g * 149.685 + gradientcolor.b * 29.07) <= 186) {
-            CtxPdf.fillStyle = "white";
-            CtxPdf.strokeStyle = "white";
-        }
-    }
-
-
-
-    CtxPdf.beginPath();
-    //left cut
-    CtxPdf.moveTo((Canvas.width / 4), Canvas.height - 10);
-    CtxPdf.lineTo((Canvas.width / 4), Canvas.height - 50);
-    //right cut
-    CtxPdf.moveTo((Canvas.width / 4) * 3, Canvas.height - 10);
-    CtxPdf.lineTo((Canvas.width / 4) * 3, Canvas.height - 50);
-    CtxPdf.stroke();
-
-    CtxPdf.font = "24px Roboto";
-    CtxPdf.fillText("y=" + y.toFixed(2), 210, 340);
-    CtxPdf.fillStyle = "black";
-}
-
-//renders the strips.
-function renderSetup() {
-    //let ysize = Canvas.width / (maxx - minx);
-    PdfCanvas.height = (totalIndex + 1) * 15 + 15;
-    CtxPdf.fillStyle = "white";
-    CtxPdf.fillRect(0, 0, PdfCanvas.width, PdfCanvas.height);
-    CtxPdf.fillStyle = "black";
-    CtxPdf.lineWidth = 3;
-    CtxPdf.beginPath();
-    CtxPdf.rect(10, 10, 150, (totalIndex + 1) * 15);
-    for (let index = 0; index <= totalIndex; index++) {
-        CtxPdf.moveTo(10, 15 * (index + 1) + 10);
-        CtxPdf.lineTo(60, 15 * (index + 1) + 10);
-    }
-    CtxPdf.rect(190, 10, 150, (totalIndex + 1) * 15);
-    for (let index = 0; index <= totalIndex; index++) {
-        CtxPdf.moveTo(190, 15 * (index + 1) + 10);
-        CtxPdf.lineTo(240, 15 * (index + 1) + 10);
-    }
-    CtxPdf.stroke();
-}
-
-//creates the PDF and puts all the layers in the right place
-function makePDF() {
-    var pdf = new jsPDF();
-    let countEven = 0;
-    let countOdd = 0;
-    totalIndex = 0
-    for (let index = miny; index <= maxy; index += YSTEP) {
-        y = index;
-        PDFRenderFunction(F);
-        var imgData = PdfCanvas.toDataURL("image/jpeg", 1);
-        if (totalIndex % 2 == 0) {
-            if (totalIndex % 8 == 0 && countEven != 0) {
-                pdf.addPage();
-                countEven = 0;
-                countOdd = 0;
-            }
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5);
-            countEven++;
-        } else {
-            pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, PdfCanvas.height / 5.5);
-            countOdd++;
-        }
-
-        totalIndex++;
-    }
-    renderSetup();
-    var imgData = PdfCanvas.toDataURL("image/jpeg", 1);
-    let stripheight = PdfCanvas.height;
-    PdfCanvas.height = 400;
-    //TODO: have to change the height of the images dynamicaly later!!!!!! PdfCanvas.height / 3.5
-    if (totalIndex % 2 == 0) {
-        if ((pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + (PdfCanvas.height / 5.5) * countEven + 1, PdfCanvas.width / 5.5, stripheight / 3.5);
-        } else {
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, Canvas.width / 5.5, stripheight / 3.5);
-        }
-    } else {
-        if ((pdfYMargin + (PdfCanvas.height / 5.5) * countOdd) + (PdfCanvas.height / 3.3) < pdf.internal.pageSize.getHeight()) {
-            pdf.addImage(imgData, 'JPEG', pdfXMargin + (PdfCanvas.width / 5.5), pdfYMargin + (PdfCanvas.height / 5.5) * countOdd, PdfCanvas.width / 5.5, stripheight / 3.5);
-        } else {
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', pdfXMargin, pdfYMargin + 20, PdfCanvas.width / 5.5, stripheight / 3.5);
-        }
-
-    }
-
-    pdf.save("3d-Function-Paper-Cutout.pdf");
-}*/
 
 //---------------------------------------------------------------------------
 //if an error occures
@@ -451,6 +319,7 @@ function createSvg(f) {
     ctxx.beginPath();
     for (let x = MinX(); x <= (MaxX()); x += XSTEP * 1) {
         let z = parsedExpression.evaluate({ x: x, y: y });
+
         if (first) {
             ctxx.moveTo(XC(x).toFixed(2), ZC(z).toFixed(2));
             first = false;
@@ -613,6 +482,56 @@ async function createVectorPDF() {
 }
 
 //---------------------------------------------------------------------------
+let HeightMapData = [];
+function getHeight2(indexX, indexY, layers) {
+    let index = ~~((500 / (Math.floor(((maxy - miny) / YSTEP + 1)))) * (indexY - miny));
+    let index2 = ~~mapRange(indexX, MinX(), MaxX(), 0, 500);
+    try {
+        return HeightMapData[index][index2];
+    } catch (error) {
+        return 0.5;
+    }
+
+
+}
+
+function DrawHeightMap() {
+    let pix = HeightCtx.getImageData(0, 0, 500, 500).data;
+    const R = 500, C = 500;
+
+    for (var i = 0; i < R; i++) {
+        HeightMapData[i] = [];
+        for (var j = 0; j < C; j++) {
+            HeightMapData[i][j] = 0.0;
+        }
+    }
+    // Loop over each pixel and invert the color. pix.length
+    for (let i = 0; i < pix.length; i += 4) {
+        let over = (i / 4) % 500;
+        let index = ((i / 4) - over) / 500;
+        let dat = (pix[i] + pix[i + 1] + pix[i + 2]) / 765;
+        HeightMapData[index][over] = dat;
+        //HeightMapData.push(dat);
+    }
+
+}
+
+let imageLoader = document.getElementById('uploadHeightMap');
+imageLoader.addEventListener('change', handleImage, false);
+
+
+function handleImage(e) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var img = new Image();
+        img.onload = function () {
+            HeightCtx.drawImage(img, 0, 0, img.width, img.height, 0, 0, HeightCanvas.width, HeightCanvas.height);
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+}
+
 //canvas calculations
 // Returns the right boundary of the logical viewport:
 function MaxX() {
