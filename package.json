@@ -18,6 +18,6 @@
     "typeface-open-sans": "0.0.75"
   },
   "devDependencies": {
-    "postcss": "6.0.14"
+    "postcss": "7.0.36"
   }
 }
